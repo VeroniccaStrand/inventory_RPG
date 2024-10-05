@@ -12,8 +12,8 @@ public class Arrow extends Ammo{
         return material.getMaterialBonus() + quality.getQualityBonus();
     }
 
-    @Override
+
     public void use(Inventory inventory) {
-        inventory.removeItem(this, 1);
+        inventory.removeItem(this,1);
     }
 }

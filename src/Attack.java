@@ -1,13 +1,29 @@
-public class Attack {
-    private Equipment equipment;
+public class Attack implements AttackPerformer {
 
-    public Attack(Equipment equipment) {
-        this.equipment = equipment;
+    protected Weapon equippedWeapon;
+
+    public Attack(Weapon weapon) {
+        this.equippedWeapon = weapon;
     }
 
-    // Lätt attack
+    @Override
+    public void performAttack(AttackType attackType) {
+        switch (attackType) {
+            case LIGHT:
+                performLightAttack();
+                break;
+            case HEAVY:
+                performHeavyAttack();
+                break;
+            case MAGIC:
+                performMagicAttack();
+                break;
+            default:
+                System.out.println("Unknown attack type.");
+        }
+    }
+
     public void performLightAttack() {
-        Weapon equippedWeapon = equipment.getEquippedWeapon();
         if (equippedWeapon instanceof LightAttack) {
             ((LightAttack) equippedWeapon).performLightAttack();
         } else {
@@ -15,9 +31,7 @@ public class Attack {
         }
     }
 
-    // Tung attack
     public void performHeavyAttack() {
-        Weapon equippedWeapon = equipment.getEquippedWeapon();
         if (equippedWeapon instanceof HeavyAttack) {
             ((HeavyAttack) equippedWeapon).performHeavyAttack();
         } else {
@@ -25,9 +39,7 @@ public class Attack {
         }
     }
 
-    // Magisk attack
     public void performMagicAttack() {
-        Weapon equippedWeapon = equipment.getEquippedWeapon();
         if (equippedWeapon instanceof MagicAttack) {
             ((MagicAttack) equippedWeapon).performMagicAttack();
         } else {
