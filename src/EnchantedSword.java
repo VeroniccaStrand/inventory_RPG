@@ -1,4 +1,4 @@
-public class EnchantedSword extends Weapon implements Enchantable, MagicAttack, HeavyAttack, LightAttack{
+public class EnchantedSword extends Weapon implements Enchantable{
     private Enchantment enchantment;
     private final int baseDamage;
     private final int weaponDamage;
@@ -30,27 +30,24 @@ public class EnchantedSword extends Weapon implements Enchantable, MagicAttack, 
         return baseDamage + enchantmentBonus + getQuality().getQualityBonus() + getMaterial().getMaterialBonus();
     }
 
-    public void performMagicAttack() {
-        if (enchantment != null) {
-
-            System.out.println(getName() + " slashes with " + enchantment.getName() + " magic, dealing " + getWeaponDamage() * 2 + " damage!");
-        } else {
-            System.out.println(getName() + " has no enchantment.");
-        }
-
-}
-
-
-
+    public int performAttack(AttackType attackType) {
+        // Beräkna den totala skadan baserat på attacktypens multiplikator
+        double totalDamage = calculateWeaponDamage() * attackType.getMultiplier();
+        return (int) totalDamage;
+    }
     @Override
-    public void performHeavyAttack() {
-        System.out.println(getName() + " slashes with " + enchantment.getName() + " magic, dealing " + getWeaponDamage() + " damage!");
-
+    public int lightAttack() {
+        return performAttack(AttackType.LIGHT) ;
     }
 
     @Override
-    public void performLightAttack() {
-        System.out.println(getName() + " slashes with " + enchantment.getName() + " magic, dealing " + getWeaponDamage() / 2 + " damage!");
-
+    public int heavyAttack() {
+        return performAttack(AttackType.HEAVY);
     }
+
+
+
+
+
+
 }

@@ -1,49 +1,31 @@
-public class Attack implements AttackPerformer {
+public class Attack  {
 
     protected Weapon equippedWeapon;
+    protected Enemy target;
 
-    public Attack(Weapon weapon) {
+    public Attack(Weapon weapon, Enemy target) {
         this.equippedWeapon = weapon;
+        this.target = target;
     }
 
-    @Override
+
     public void performAttack(AttackType attackType) {
+        int damage = 0;
         switch (attackType) {
             case LIGHT:
-                performLightAttack();
+                damage = equippedWeapon.lightAttack();
                 break;
             case HEAVY:
-                performHeavyAttack();
+                damage = equippedWeapon.heavyAttack();
+                System.out.println();
                 break;
-            case MAGIC:
-                performMagicAttack();
-                break;
+
             default:
                 System.out.println("Unknown attack type.");
         }
+        System.out.println("The attack dealt " + damage + " damage.");
+        target.takeDamage(damage);
     }
 
-    public void performLightAttack() {
-        if (equippedWeapon instanceof LightAttack) {
-            ((LightAttack) equippedWeapon).performLightAttack();
-        } else {
-            System.out.println("Equipped weapon cannot perform a light attack.");
-        }
-    }
 
-    public void performHeavyAttack() {
-        if (equippedWeapon instanceof HeavyAttack) {
-            ((HeavyAttack) equippedWeapon).performHeavyAttack();
-        } else {
-            System.out.println("Equipped weapon cannot perform a heavy attack.");
-        }
-    }
-
-    public void performMagicAttack() {
-        if (equippedWeapon instanceof MagicAttack) {
-            ((MagicAttack) equippedWeapon).performMagicAttack();
-        } else {
-            System.out.println("Equipped weapon cannot perform a magic attack.");
-        }
-    }
 }

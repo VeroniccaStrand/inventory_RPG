@@ -9,35 +9,22 @@ public class Player {
         this.equipment = new Equipment();
     }
 
-
-    public void performAttack(AttackType attackType) {
+public void performAttack(AttackType attackType, Enemy target) {
         Weapon equippedWeapon = equipment.getEquippedWeapon();
-        Ammo equippedAmmo = equipment.getEquippedAmmo();
 
-        // Kontrollera om spelaren har ett vapen utrustat
-        if (equippedWeapon == null) {
-            System.out.println("No weapon equipped.");
-            return;
-        }
-
-        // Skapa en instans av Attack eller RangeAttack beroende på vapentyp
-        AttackPerformer attackPerformer;  // Rätt stavning
-
-        if (equippedWeapon instanceof RangeAttacker && equippedAmmo != null) {
-            // Om vapnet använder ammo, skapa RangeAttack
-            attackPerformer = new RangeAttack(equippedWeapon, equippedAmmo);
-            equipment.useAmmo();
-        } else {
-            // Annars, skapa en vanlig Attack
-            attackPerformer = new Attack(equippedWeapon);
-        }
-
-        // Utför attacken
-        attackPerformer.performAttack(attackType);
+        //kollar så ett vapen är equippat
+    if(equippedWeapon == null) {
+        System.out.println("no weapon found");
+        return;
     }
+    Attack attack = new Attack(equippedWeapon, target);
+    attack.performAttack(attackType);
+}
 
 
 
+//Just nu finns bara Consumables för användning, och de har en egen metod att hantera use då de är stackable.
+    //bygga ut för items som inte är stackable (default) och/eller för items med special use()
     public void useItem (Item item){
             if (item instanceof Consumable) {
                 ((Consumable) item).use(inventory);
@@ -45,7 +32,8 @@ public class Player {
                 System.out.println(item.getName() + " cannot be used.");
             }
         }
-
+//metod för att tilldela sitt vapen en enchanment. (kan skapa en interface enchantable men nu finns bara ett enchanted sword)
+    //nu enchantar man det vapnet man har equippat
     public void enchantWeapon(Enchantment enchantment) {
         Weapon equippedWeapon = equipment.getEquippedWeapon();
         if (equippedWeapon instanceof Enchantable) {
