@@ -3,12 +3,11 @@ import java.util.List;
 
 public class Equipment {
     private Weapon equippedWeapon;
-
-    private int equippedAmmoCount = 0;
     private List<Armor> equippedArmor;
     private List<Item> equippedItems;
     private int totalDefense;
     private int totalDamage;
+
 
     public Equipment() {
         this.equippedArmor = new ArrayList<>();
@@ -20,20 +19,24 @@ public class Equipment {
 
 
     public void equip(Item item, Inventory inventory) {
+        if(!inventory.contains(item)) {
+            System.out.println(item.getName() + "is not in your inventory");
+            return;
+        }
         switch (item) {
             case Weapon weapon -> equipWeapon(weapon);
-
             case Armor armor -> equipArmor(armor);
             case null, default -> equipItem(item);
         }
+
     }
+
 
     public void equipWeapon(Weapon weapon) {
         if (equippedWeapon != null) {
             totalDamage -= equippedWeapon.calculateWeaponDamage();
             System.out.println(equippedWeapon.getName() + " was unequipped.");
         }
-
         equippedWeapon = weapon;
         totalDamage += weapon.calculateWeaponDamage();
         System.out.println(weapon.getName() + " equipped. Damage increased.");
@@ -53,6 +56,8 @@ public class Equipment {
         totalDefense += armor.calculateDefense();
         System.out.println(armor.getName() + " equipped. Defense increased.");
     }
+
+
     private void equipItem(Item item) {
         if (equippedItems.size() < 10) {
             equippedItems.add(item);
@@ -61,6 +66,8 @@ public class Equipment {
             System.out.println("Cannot equip more than 10 items.");
         }
     }
+
+
     private Armor findArmorOfType(Class<? extends Armor> armorClass) {
         for (Armor armor : equippedArmor) {
             if (armorClass.isInstance(armor)) {
@@ -69,13 +76,19 @@ public class Equipment {
         }
         return null;
     }
+
+
     public int getTotalDefense() {
         return totalDefense;
     }
 
+
+
     public int getTotalDamage() {
         return totalDamage;
     }
+
+
     public Weapon getEquippedWeapon(){
         return equippedWeapon;
     }
@@ -91,8 +104,6 @@ public class Equipment {
             System.out.println("No weapon equipped.");
         }
 
-
-
         if (!equippedArmor.isEmpty()) {
             System.out.println("Armor equipped:");
             for (Armor armor : equippedArmor) {
@@ -100,6 +111,15 @@ public class Equipment {
             }
         } else {
             System.out.println("No armor equipped.");
+        }
+
+        if (!equippedItems.isEmpty()) {
+            System.out.println("Other items equipped:");
+            for (Item item : equippedItems) {
+                System.out.println("- " + item.getName());
+            }
+        } else {
+            System.out.println("No other items equipped.");
         }
     }
 }

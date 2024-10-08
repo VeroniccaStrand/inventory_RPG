@@ -11,21 +11,23 @@ public class Inventory {
         this.items = new HashMap<Item, Integer>(initialCapacity);
         this.maxCapacity = initialCapacity;
     }
+
+    public boolean contains(Item item) {
+        return items.containsKey(item);
+    }
+
     public void addItem(Item item, int quantity) {
+        if (items.size() >= maxCapacity && !item.isStackable()) {
+            System.out.println("Inventory is full.");
+            return;
+        }
+
         if (item.isStackable()) {
             items.put(item, items.getOrDefault(item, 0) + quantity);
             System.out.println("Added " + quantity + " of " + item.getName());
         } else {
-            if (items.size() < maxCapacity) {
-                items.put(item, 1);
-                System.out.println("added item: " + item.getName());
-
-
-            } else {
-                System.out.println("inventory is full");
-
-            }
-
+            items.put(item, 1);
+            System.out.println("Added item: " + item.getName());
         }
     }
     public boolean removeItem(Item item, int quantity) {
@@ -55,14 +57,20 @@ public class Inventory {
         }
     }
     public void display() {
-        for (Map.Entry<Item, Integer> entry : items.entrySet()) {
-            System.out.println(entry.getKey().getName() + " : " + entry.getValue());
-
-        }
+        System.out.println("Inventory:");
+        if (items != null && !items.isEmpty()) {
+            for (Map.Entry<Item, Integer> entry : items.entrySet()) {
+                System.out.println(entry.getKey().getName() + " : " + entry.getValue());
+            }
+        }else{
+                System.out.println("No items found");
+            }
     }
+
     public Map<Item, Integer> getItems() {
         return items;
     }
+
 
 
     public int getItemQuantity(Item item) {

@@ -1,6 +1,5 @@
 public class Player {
 
-
     private final Inventory inventory;
     private final Equipment equipment;
 
@@ -9,31 +8,52 @@ public class Player {
         this.equipment = new Equipment();
     }
 
-public void performAttack(AttackType attackType, Enemy target) {
+    // Hantera attacker med AttackProcessor
+    public void performAttack(AttackType attackType, Enemy target) {
         Weapon equippedWeapon = equipment.getEquippedWeapon();
 
-        //kollar så ett vapen är equippat
-    if(equippedWeapon == null) {
-        System.out.println("no weapon found");
-        return;
-    }
-    Attack attack = new Attack(equippedWeapon, target);
-    attack.performAttack(attackType);
-}
-
-
-
-//Just nu finns bara Consumables för användning, och de har en egen metod att hantera use då de är stackable.
-    //bygga ut för items som inte är stackable (default) och/eller för items med special use()
-    public void useItem (Item item){
-            if (item instanceof Consumable) {
-                ((Consumable) item).use(inventory);
-            } else {
-                System.out.println(item.getName() + " cannot be used.");
-            }
+        if (equippedWeapon == null) {
+            System.out.println("No weapon found.");
+            return;
         }
-//metod för att tilldela sitt vapen en enchanment. (kan skapa en interface enchantable men nu finns bara ett enchanted sword)
-    //nu enchantar man det vapnet man har equippat
+
+        AttackProcessor attack = new AttackProcessor(equippedWeapon, target);
+        attack.performAttack(attackType);
+    }
+
+    public void pickUpItem(Item item, int quantity) {
+        if (item.isStackable()) {
+
+            inventory.addItem(item, quantity);
+            System.out.println("Picked up " + quantity + " of " + item.getName());
+        } else {
+
+            inventory.addItem(item, 1);
+            System.out.println("Picked up 1 of " + item.getName());
+        }
+    }
+
+    public void throwItem(Item item) {
+        boolean success = inventory.removeItem(item, 1);
+        if (success) {
+            System.out.println("Throwed " + item.getName());
+        }else {
+            System.out.println("Throwing "  + item.getName());
+        }
+
+    }
+
+
+
+    public void useItem(Item item) {
+        if (item instanceof Consumable) {
+            ((Consumable) item).use(inventory);
+        } else {
+            System.out.println(item.getName() + " cannot be used.");
+        }
+    }
+
+    // Enchanta det nuvarande vapnet
     public void enchantWeapon(Enchantment enchantment) {
         Weapon equippedWeapon = equipment.getEquippedWeapon();
         if (equippedWeapon instanceof Enchantable) {
@@ -43,27 +63,26 @@ public void performAttack(AttackType attackType, Enemy target) {
         }
     }
 
+    // Utrusta ett föremål
     public void equip(Item item) {
         equipment.equip(item, inventory);
     }
 
-        public void displayInventory () {
-            inventory.display();
-        }
-
-        public Inventory getInventory () {
-            return inventory;
-        }
-
-        public int getTotalDefense () {
-            return equipment.getTotalDefense();
-        }
-
-        public int getTotalDamage () {
-            return equipment.getTotalDamage();
-        }
-        public Equipment getEquipment () {
-            return equipment;
-        }
+    // Hämta försvar och skada från utrustningen
+    public int getTotalDefense() {
+        return equipment.getTotalDefense();
     }
 
+    public int getTotalDamage() {
+        return equipment.getTotalDamage();
+    }
+
+    // Getter för inventory och equipment
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public Equipment getEquipment() {
+        return equipment;
+    }
+}

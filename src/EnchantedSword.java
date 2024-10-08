@@ -30,20 +30,8 @@ public class EnchantedSword extends Weapon implements Enchantable{
         return baseDamage + enchantmentBonus + getQuality().getQualityBonus() + getMaterial().getMaterialBonus();
     }
 
-    public int performAttack(AttackType attackType) {
-        // Beräkna den totala skadan baserat på attacktypens multiplikator
-        double totalDamage = calculateWeaponDamage() * attackType.getMultiplier();
-        return (int) totalDamage;
-    }
-    @Override
-    public int lightAttack() {
-        return performAttack(AttackType.LIGHT) ;
-    }
 
-    @Override
-    public int heavyAttack() {
-        return performAttack(AttackType.HEAVY);
-    }
+
 
 
 
