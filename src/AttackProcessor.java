@@ -1,22 +1,25 @@
-public class AttackProcessor  {
+public class AttackProcessor {
 
-    protected Weapon equippedWeapon;
-    protected Enemy target;
+    private Weapon equippedWeapon;
+    private Enemy target;
 
-    public AttackProcessor(Weapon weapon, Enemy target) {
-        this.equippedWeapon = weapon;
+    public AttackProcessor(Weapon equippedWeapon, Enemy target) {
+        this.equippedWeapon = equippedWeapon;
         this.target = target;
     }
 
-
     public void performAttack(AttackType attackType) {
-        // Använd vapnets beräknade skada och multiplicera baserat på attacktyp
         int baseDamage = equippedWeapon.calculateWeaponDamage();
         int totalDamage = (int) (baseDamage * attackType.getMultiplier());
 
-        System.out.println("The attack dealt " + totalDamage + " " + attackType.name() + " damage.");
         target.takeDamage(totalDamage);
+
+        if (target.isAlive()) {
+            System.out.println("The attack dealt " + totalDamage + " " + attackType.name() + " damage!");
+            System.out.println("The " + target.getName() + " has " + target.getHealth() + " health remaining.");
+        } else {
+            System.out.println("The attack dealt " + totalDamage + " " + attackType.name() + " damage!");
+            System.out.println("The " + target.getName() + " died.");
+        }
     }
-
-
 }

@@ -24,10 +24,10 @@ public class Inventory {
 
         if (item.isStackable()) {
             items.put(item, items.getOrDefault(item, 0) + quantity);
-            System.out.println("Added " + quantity + " of " + item.getName());
+
         } else {
             items.put(item, 1);
-            System.out.println("Added item: " + item.getName());
+
         }
     }
     public boolean removeItem(Item item, int quantity) {
@@ -36,9 +36,9 @@ public class Inventory {
             if (item.isStackable()) {
                 if (currentQuantity >= quantity) {
                     if (currentQuantity == quantity) {
-                        items.remove(item);  // Ta bort item om kvantiteten når 0
+                        items.remove(item);
                     } else {
-                        items.put(item, currentQuantity - quantity);  // Minska kvantiteten
+                        items.put(item, currentQuantity - quantity);
                     }
                     System.out.println("Removed " + quantity + " of " + item.getName());
                     return true;
@@ -47,7 +47,7 @@ public class Inventory {
                     return false;
                 }
             } else {
-                items.remove(item);  // För icke-stapelbara föremål, ta bara bort det
+                items.remove(item);
                 System.out.println("Removed item: " + item.getName());
                 return true;
             }

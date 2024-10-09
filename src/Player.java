@@ -2,10 +2,16 @@ public class Player {
 
     private final Inventory inventory;
     private final Equipment equipment;
+    private String name;
+    private int health;
+    private boolean dead;
 
     public Player() {
         this.inventory = new Inventory(100);
         this.equipment = new Equipment();
+        this.name = "Player";
+        this.health = 500;
+        this.dead = false;
     }
 
     // Hantera attacker med AttackProcessor
@@ -85,4 +91,20 @@ public class Player {
     public Equipment getEquipment() {
         return equipment;
     }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void takeDamage(int attackPower) {
+        health -= attackPower;
+        if(health <= 0) {
+            dead = true;
+        }
+    }
+    public boolean isDead() {
+        return dead;
+    }
+
+
 }
