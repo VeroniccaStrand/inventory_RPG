@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,7 @@ public class Inventory {
     private int maxCapacity;
 
     public Inventory(int initialCapacity) {
-        this.items = new HashMap<Item, Integer>(initialCapacity);
+        this.items = new HashMap<>(initialCapacity);
         this.maxCapacity = initialCapacity;
     }
 
@@ -71,7 +71,14 @@ public class Inventory {
         return items;
     }
 
-
+    public <T> T findItemByType(Class<T> type) {
+        for (Item item : items.keySet()) {
+            if (type.isInstance(item)) {
+                return type.cast(item);
+            }
+        }
+        return null;
+    }
 
     public int getItemQuantity(Item item) {
         return items.getOrDefault(item, 0);

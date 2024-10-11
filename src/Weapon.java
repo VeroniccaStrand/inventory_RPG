@@ -15,7 +15,7 @@ public abstract class Weapon extends Item{
     }
 
 
-    public abstract int calculateWeaponDamage(); // Låter specifika vapen hantera sin beräkning
+    public abstract int calculateWeaponDamage();
 
 
 

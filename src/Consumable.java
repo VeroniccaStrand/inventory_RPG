@@ -4,5 +4,5 @@ public abstract class Consumable extends Item {
     super(name, description, value,true);
 
     }
-    public abstract void use(Inventory inventory);
+    public abstract int use(Inventory inventory);
 }

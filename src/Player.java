@@ -2,19 +2,20 @@ public class Player {
 
     private final Inventory inventory;
     private final Equipment equipment;
-    private String name;
     private int health;
     private boolean dead;
 
     public Player() {
+        String name = "Player";
+
         this.inventory = new Inventory(100);
         this.equipment = new Equipment();
-        this.name = "Player";
-        this.health = 500;
+
+        this.health = 600;
         this.dead = false;
     }
 
-    // Hantera attacker med AttackProcessor
+
     public void performAttack(AttackType attackType, Enemy target) {
         Weapon equippedWeapon = equipment.getEquippedWeapon();
 
@@ -49,17 +50,48 @@ public class Player {
 
     }
 
-
-
-    public void useItem(Item item) {
-        if (item instanceof Consumable) {
-            ((Consumable) item).use(inventory);
-        } else {
-            System.out.println(item.getName() + " cannot be used.");
+    public void increaseHealth(int amount) {
+        if(amount > 0) {
+            health += amount;
+            int maxHealth = 1000;
+            if(this.health > maxHealth) {
+                this.health = maxHealth;
+            }
         }
     }
 
-    // Enchanta det nuvarande vapnet
+
+
+    public void useItem(Item item) {
+
+        if (inventory.getItems().containsKey(item) && inventory.getItems().get(item) > 0) {
+            if (item instanceof Consumable) {
+                if (item instanceof Potion potion) {
+
+                    if (potion.getPotionType() == PotionType.HEALTH) {
+                        int value = potion.use(inventory);
+                        increaseHealth(value);
+                        System.out.println("You used a Health Potion.");
+                    }
+
+                    else if (potion.getPotionType() == PotionType.STAMINA) {
+                        int value = potion.use(inventory);
+                        System.out.println("You restored " + value + " stamina.");
+                    }
+                } else {
+
+                    ((Consumable) item).use(inventory);
+                }
+            } else {
+                System.out.println(item.getName() + " cannot be used.");
+            }
+        } else {
+
+            System.out.println("You don't have any " + item.getName() + " in your inventory.");
+        }
+    }
+
+
     public void enchantWeapon(Enchantment enchantment) {
         Weapon equippedWeapon = equipment.getEquippedWeapon();
         if (equippedWeapon instanceof Enchantable) {
@@ -69,12 +101,12 @@ public class Player {
         }
     }
 
-    // Utrusta ett föremål
+
     public void equip(Item item) {
         equipment.equip(item, inventory);
     }
 
-    // Hämta försvar och skada från utrustningen
+
     public int getTotalDefense() {
         return equipment.getTotalDefense();
     }
@@ -83,7 +115,7 @@ public class Player {
         return equipment.getTotalDamage();
     }
 
-    // Getter för inventory och equipment
+
     public Inventory getInventory() {
         return inventory;
     }

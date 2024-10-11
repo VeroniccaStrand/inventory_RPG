@@ -1,3 +1,4 @@
+
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
@@ -7,25 +8,34 @@ public class Game {
     private List<Enemy> enemies;
     private Scanner scanner;
 
-    // Konstruktorn tar in spelaren och scannern
+
     public Game(Player player, Scanner scanner) {
         this.player = player;
         this.enemies = new ArrayList<>();
         this.scanner = scanner;
-        initializeEnemies();  // Initiera fiender
+        initializeEnemies();
     }
 
-    // Startar spelet och hanterar spelets gång
+
     public void start() {
-        System.out.println("You wake up in a mysterious forest...");
-        exploreArea();  // Börjar med att spelaren går runt och hittar saker
+
+        Potion staminaPotion = new Potion("Stamina Potion","Increas Stamina",14,PotionType.STAMINA,1);
+        player.pickUpItem(staminaPotion, 1);
+        player.throwItem(staminaPotion);
+
+        System.out.println("You wake up in a mysterious forest... and there is a chest, let's open it!");
+        openChest();
 
         while (!player.isDead()) {
+            System.out.println("player stats: " + "health: " + player.getHealth());
+
             System.out.println("\nWhat would you like to do?");
             System.out.println("1. Fight");
-            System.out.println("2. Explore");
-            System.out.println("3. Show Inventory");
-            System.out.println("4. Quit");
+            System.out.println("2. Show Inventory");
+            System.out.println("3. Quit");
+            System.out.println("4. Enchant Weapons");
+            System.out.println("5. Show Equipment Inventory");
+            System.out.println("6. Drink Health Potion");
 
             int choice = scanner.nextInt();
 
@@ -33,75 +43,193 @@ public class Game {
                 case 1:
                     startBattle();
                     break;
+
                 case 2:
-                    exploreArea();
+                    showInventoryAndEquip();
                     break;
+
                 case 3:
-                    player.getInventory().display();  // Visa spelarens inventory
-                    break;
-                case 4:
                     System.out.println("You have chosen to quit the game.");
                     System.exit(0);
                     break;
+
+                case 4:
+                    enchantWeapon();
+                    break;
+
+                case 5:
+                    player.getEquipment().displayEquipment();
+                    break;
+
+                case 6:
+                    Potion healthPotion = player.getInventory().findItemByType(Potion.class);
+                   if (healthPotion != null && healthPotion.getPotionType() == PotionType.HEALTH) {
+                       player.useItem(healthPotion);
+                   }else{
+                       System.out.println("You don't have any Health Potions");
+                }
+                   break;
+
                 default:
                     System.out.println("Invalid choice. Try again.");
+
             }
         }
 
         gameOver();
     }
 
-    // Metod för att utforska området och hitta föremål
-    private void exploreArea() {
-        System.out.println("You explore the area and find some items.");
+    private void enchantWeapon() {
+        Weapon equippedWeapon = player.getEquipment().getEquippedWeapon();
 
-        // Skapa föremål
-        Weapon sword = new EnchantedSword("Sword", "A sharp steel sword.", 150, Material.STEEL,Quality.EXELLENT,150);
-        Armor boots = new Boots("leather boots","Rugged",10,Material.LEATHER,Quality.POOR,25);
-        Potion healthPotion = new Potion("Health Potion", "Restores 50 health.", 50, PotionType.HEALTH);
-        Potion staminaPotion = new Potion("Stamina Potion", "Restores 20 stamina.", 30, PotionType.STAMINA);
+        if (equippedWeapon instanceof EnchantedSword enchantedSword) {
 
-        // Låt spelaren välja om de vill plocka upp föremålen
-        System.out.println("You found a " + sword.getName() + ". Do you want to pick it up? (yes/no)");
-        if (scanner.next().equalsIgnoreCase("yes")) {
-            player.pickUpItem(sword, 1);
-            player.equip(sword);
-        }
-        System.out.println("You found  " + boots.getName() + ". Do you want to pick them up? (yes/no)");
-        if (scanner.next().equalsIgnoreCase("yes")) {
-            player.pickUpItem(boots, 1);
-            player.equip(boots);
-        }
 
-        System.out.println("You found a " + healthPotion.getName() + ". Do you want to pick it up? (yes/no)");
-        if (scanner.next().equalsIgnoreCase("yes")) {
-            player.pickUpItem(healthPotion, 1);
-        }
+            System.out.println("Choose an enchantment for your weapon:");
+            Enchantment[] enchantments = Enchantment.values();
+            for (int i = 0; i < enchantments.length; i++) {
+                System.out.println((i + 1) + ". " + enchantments[i].getName() + " (+" + enchantments[i].getDamageBonus() + " damage)");
+            }
 
-        System.out.println("You found a " + staminaPotion.getName() + ". Do you want to pick it up? (yes/no)");
-        if (scanner.next().equalsIgnoreCase("yes")) {
-            player.pickUpItem(staminaPotion, 1);
+
+            int choice = scanner.nextInt();
+            if (choice > 0 && choice <= enchantments.length) {
+                Enchantment chosenEnchantment = enchantments[choice - 1];
+                enchantedSword.setEnchantment(chosenEnchantment);
+                System.out.println("Your weapon has been enchanted with: " + chosenEnchantment.getName());
+            } else {
+                System.out.println("Invalid choice. No enchantment applied.");
+            }
+        } else {
+            System.out.println("You don't have an enchanted weapon equipped.");
         }
     }
 
-    // Starta en strid med fiender
+    private void showInventoryAndEquip() {
+        System.out.println("Your Inventory:");
+        player.getInventory().display();
+
+        System.out.println("Do you want to equip an item? (yes/no)");
+        String equipChoice = scanner.next();
+
+        if (equipChoice.equalsIgnoreCase("yes")) {
+            System.out.println("Enter the number of the item to equip:");
+            List<Item> items = new ArrayList<>(player.getInventory().getItems().keySet());
+
+            for (int i = 0; i < items.size(); i++) {
+                System.out.println((i + 1) + ". " + items.get(i).getName());
+            }
+
+            int itemChoice = scanner.nextInt();
+            if (itemChoice > 0 && itemChoice <= items.size()) {
+                Item itemToEquip = items.get(itemChoice - 1);
+                player.equip(itemToEquip);
+                System.out.println("You have equipped: " + itemToEquip.getName());
+            } else {
+                System.out.println("Invalid choice. No item equipped.");
+            }
+        }
+    }
+    private void openChest() {
+        System.out.println("You found a chest! Let's see what's inside...");
+
+
+        List<Item> chestItems = getItems();
+
+
+        System.out.println("The chest contains:");
+        for (int i = 0; i < chestItems.size(); i++) {
+            System.out.println((i + 1) + ". " + chestItems.get(i).getName() );
+        }
+
+
+        System.out.println("Do you want to take everything? (yes/no)");
+        String takeAllChoice = scanner.next();
+
+        if (takeAllChoice.equalsIgnoreCase("yes")) {
+
+            for (Item item : chestItems) {
+                if(item instanceof Potion potion) {
+                    player.pickUpItem(potion, potion.getQuantity());
+                }else {
+                    player.pickUpItem(item, 1);
+                }
+
+            }
+            System.out.println("You took everything from the chest!");
+
+        } else {
+
+            System.out.println("Choose which items to take (enter the numbers separated by commas, e.g., 1,2):");
+            String choices = scanner.next();
+            String[] itemChoices = choices.split(",");
+
+            for (String choice : itemChoices) {
+                try {
+                    int itemIndex = Integer.parseInt(choice.trim()) - 1;
+                    if (itemIndex >= 0 && itemIndex < chestItems.size()) {
+                        Item selectedItem = chestItems.get(itemIndex);
+                        player.pickUpItem(selectedItem, 1);
+
+                        System.out.println("You picked up the " + selectedItem.getName() + ".");
+                    } else {
+                        System.out.println("Invalid item choice.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter valid numbers.");
+                }
+            }
+        }
+    }
+
+    private static List<Item> getItems() {
+        Weapon sword = new EnchantedSword("Sword", "A sharp steel sword.", 150, Material.STEEL, Quality.EXCELLENT, 150);
+        Armor boots = new Boots("Leather Boots", "Rugged", 10, Material.LEATHER, Quality.POOR, 25);
+        Potion healthPotion = new Potion("Health Potion", "Restores 50 health.", 50, PotionType.HEALTH, 1);
+        Potion staminaPotion = new Potion("Stamina Potion", "Restores 20 stamina.", 30, PotionType.STAMINA,34);
+
+
+        List<Item> chestItems = new ArrayList<>();
+        chestItems.add(sword);
+        chestItems.add(boots);
+        chestItems.add(healthPotion);
+        chestItems.add(staminaPotion);
+        return chestItems;
+    }
+
+
     public void startBattle() {
         if (enemies.isEmpty()) {
             System.out.println("There are no more enemies left to fight!");
             return;
         }
 
-        Enemy enemy = enemies.get(0);  // Ta den första fienden i listan
+        Enemy enemy = enemies.getFirst();
         System.out.println("You encounter a " + enemy.getName());
 
         while (enemy.isAlive() && !player.isDead()) {
             playerTurn(enemy);
             if (!enemy.isAlive()) {
                 System.out.println("You have defeated the " + enemy.getName() + "!");
-                enemies.remove(enemy);  // Ta bort fienden om den är död
+                enemyDefeated(enemy);
+                enemies.remove(enemy);
                 break;
             }
             enemyTurn(enemy);
+        }
+    }
+    public void enemyDefeated(Enemy enemy) {
+        if (enemy != null) {
+            List<Item> loot = ((Lootable) enemy).dropLoot();
+            if (!loot.isEmpty()) {
+                System.out.println("You have collected the following loot from " + enemy.getName() + ":");
+                for (Item item : loot) {
+                    player.pickUpItem(item, 1);
+                    System.out.println(" - " + item.getName());
+                }
+            } else {
+                System.out.println("No loot dropped by " + enemy.getName());
+            }
         }
     }
 

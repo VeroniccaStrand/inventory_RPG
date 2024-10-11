@@ -25,7 +25,7 @@ public class EnchantedSword extends Weapon implements Enchantable{
 
     @Override
     public int calculateWeaponDamage() {
-        // Kolla om enchantment är null, annars sätt bonus till 0
+
         int enchantmentBonus = (enchantment != null) ? enchantment.getDamageBonus() : 0;
         return baseDamage + enchantmentBonus + getQuality().getQualityBonus() + getMaterial().getMaterialBonus();
     }

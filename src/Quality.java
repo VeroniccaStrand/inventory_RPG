@@ -1,7 +1,7 @@
 public enum Quality {
     POOR(5),
-    AVARAGE(15),
-    EXELLENT(25);
+    AVERAGE(15),
+    EXCELLENT(25);
 
     private final int qualityBonus;
 
@@ -9,6 +9,8 @@ public enum Quality {
         this.qualityBonus = qualityBonus;
     }
     public int getQualityBonus() {
+
+
         return qualityBonus;
     }
 }
